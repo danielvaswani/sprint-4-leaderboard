@@ -165,11 +165,16 @@ const students = [
 
 <style>
 #app {
-  font-family: Avenir, Fira Code, monospace, Arial, sans-serif;
+  font-family: Fira Code, monospace, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+@font-face {
+  font-family: Fira Code;
+  src: local("./assets/FiraCode-VF.ttf");
 }
 </style>
