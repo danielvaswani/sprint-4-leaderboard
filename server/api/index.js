@@ -23,6 +23,7 @@ const client = new MongoClient(connectionString, {
 client.connect();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 async function getLeaderboard() {
   await client.connect();
