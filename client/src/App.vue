@@ -111,7 +111,8 @@ const students = ref([
   // },
 ]);
 
-fetch("http://localhost:5001/api/leaderboard")
+// Calling my vercel hosted Mongo/Express API (MEVN)
+fetch(import.meta.env.VITE_API + "/api/leaderboard")
   .then((response) => response.json())
   .then((data) => students.value.push(...data));
 </script>
