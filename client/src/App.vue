@@ -42,8 +42,8 @@ const currentId = ref("");
 
 const toggleSelection = (id, currentName, currentPoints) => {
   currentId.value = currentId.value === id ? "" : id;
-  name.value = currentName;
-  points.value = currentPoints;
+  name.value = currentId.value !== id ? "" : currentName;
+  points.value = currentId.value !== id ? 0 : currentPoints;
 };
 
 function alertAndClearText(text) {
@@ -54,7 +54,10 @@ function alertAndClearText(text) {
 }
 
 async function addRecord() {
-  if (name.value === "") return;
+  if (name.value === "" || points.value === "") {
+    points.value = 0;
+    return;
+  }
   axios
     .post(import.meta.env.VITE_API + "/api/leaderboard/record", {
       name: name.value,
@@ -71,7 +74,19 @@ async function addRecord() {
 }
 
 async function updateRecord() {
-  if (name.value === "") return;
+  const currentStudent = students.value.filter(
+    (student) => student._id === currentId.value
+  )[0];
+  if (
+    name.value === "" ||
+    points.value === "" ||
+    (name.value === currentStudent.name &&
+      points.value === currentStudent.points)
+  ) {
+    points.value = 0;
+    return;
+  }
+
   await axios
     .put(
       import.meta.env.VITE_API + "/api/leaderboard/record/" + currentId.value,
@@ -119,14 +134,14 @@ async function getLeaderboard() {
       <input
         type="text"
         placeholder="Name"
-        class="px-2 w-48 rounded shadow text-black"
+        class="px-2 w-48 rounded shadow text-black select-text"
         v-model="name"
       />
 
       <input
         type="number"
         placeholder="Points"
-        class="px-2 w-24 rounded shadow text-black"
+        class="px-2 w-24 rounded shadow text-black select-text"
         v-model="points"
       />
 
@@ -144,7 +159,7 @@ async function getLeaderboard() {
         <div class="flex flex-row gap-3 w-20 justify-start">
           <input
             type="button"
-            value="Submit"
+            value="Edit"
             class="cursor-pointer"
             @click="updateRecord()"
           />
@@ -219,6 +234,7 @@ async function getLeaderboard() {
   box-sizing: border-box;
   padding: 0;
   padding-top: 60px;
+  padding-bottom: 30px;
   margin: 0;
   background-image: url(./assets/7130416.jpg);
   background-size: 200vh;
