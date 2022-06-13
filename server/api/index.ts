@@ -35,7 +35,6 @@ async function getLeaderboard() {
 }
 
 async function addRecord(body) {
-  await client.connect();
   return await client
     .db("leaderboard")
     .collection(COLLECTION_NAME)
@@ -43,19 +42,20 @@ async function addRecord(body) {
 }
 
 async function deleteRecordById(id) {
-  await client.connect();
   return await client
     .db("leaderboard")
     .collection(COLLECTION_NAME)
-    .deleteOne({ _id: ObjectID(id) });
+    .deleteOne({ _id: ObjectID(id.toString()) });
 }
 
 async function updateRecordById(id, body) {
-  await client.connect();
   return await client
     .db("leaderboard")
     .collection(COLLECTION_NAME)
-    .updateOne({ _id: ObjectID(id) }, body);
+    .updateOne(
+      { _id: ObjectID(id.toString()) },
+      { $set: { name: body.name, points: body.points } }
+    );
 }
 
 app.get("/api/leaderboard/", async (req, res) => {
@@ -75,6 +75,7 @@ app.post("/api/leaderboard/record", async (req, res) => {
 });
 
 app.delete("/api/leaderboard/record/:id", async (req, res) => {
+  console.log(req.params.id);
   await deleteRecordById(req.params.id)
     .then(() => res.sendStatus(200))
     .catch(() => res.sendStatus(404));

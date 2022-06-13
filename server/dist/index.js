@@ -38,7 +38,6 @@ function getLeaderboard() {
 }
 function addRecord(body) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield client.connect();
         return yield client
             .db("leaderboard")
             .collection(COLLECTION_NAME)
@@ -47,20 +46,18 @@ function addRecord(body) {
 }
 function deleteRecordById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield client.connect();
         return yield client
             .db("leaderboard")
             .collection(COLLECTION_NAME)
-            .deleteOne({ _id: ObjectID(id) });
+            .deleteOne({ _id: ObjectID(id.toString()) });
     });
 }
 function updateRecordById(id, body) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield client.connect();
         return yield client
             .db("leaderboard")
             .collection(COLLECTION_NAME)
-            .updateOne({ _id: ObjectID(id) }, body);
+            .updateOne({ _id: ObjectID(id.toString()) }, { $set: { name: body.name, points: body.points } });
     });
 }
 app.get("/api/leaderboard/", (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -77,6 +74,7 @@ app.post("/api/leaderboard/record", (req, res) => __awaiter(this, void 0, void 0
     // .finally(client.close());
 }));
 app.delete("/api/leaderboard/record/:id", (req, res) => __awaiter(this, void 0, void 0, function* () {
+    console.log(req.params.id);
     yield deleteRecordById(req.params.id)
         .then(() => res.sendStatus(200))
         .catch(() => res.sendStatus(404));
